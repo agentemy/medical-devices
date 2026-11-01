@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:storm="http://storm.bpmn2.ru/ns" id="Definitions_Medical" targetNamespace="https://medical-devices.example/practice" exporter="BPMN 2.0">
+  <bpmn:collaboration id="Collaboration_1">
+    <bpmn:participant id="Participant_1" name="Подготовка и запуск производственной партии одноразовых медицинских шприцев" processRef="Process_1" />
+    <bpmn:textAnnotation id="TextAnnotation_1tyou0q">
+      <bpmn:text>Внести правки, пока документация не будет соответствовать требованиям</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1038w93" associationDirection="None" sourceRef="Task_Adjust" targetRef="TextAnnotation_1tyou0q" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" name="Подготовка и запуск партии" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_1">
+      <bpmn:lane id="Lane_0" name="Сотрудник производственного отдела">
+        <bpmn:flowNodeRef>Register</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_1" name="Сотрудник складского отдела">
+        <bpmn:flowNodeRef>Delay_GMaterials</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_GMaterials</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GMaterials</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Materials</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1b9hl13</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_2" name="Технолог">
+        <bpmn:flowNodeRef>Docs</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GDocs</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Adjust</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_3" name="Начальник производства">
+        <bpmn:flowNodeRef>Approve</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GEquipment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Delay_GEquipment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_GEquipment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Equipment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0pdrphc</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_4" name="Сотрудник отдела контроля качества">
+        <bpmn:flowNodeRef>Quality</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GQuality</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_GQuality</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Delay_GQuality</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_5" name="Оператор производственного участка">
+        <bpmn:flowNodeRef>Prepare</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Launch</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Status</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:userTask id="Quality" name="Подтвердить соблюдение требований качества перед запуском">
+      <bpmn:incoming>Flow_8</bpmn:incoming>
+      <bpmn:outgoing>Flow_9</bpmn:outgoing>
+      <bpmn:property id="Prop_Data_Check" />
+      <bpmn:dataOutputAssociation id="Assoc_Data_Check">
+        <bpmn:sourceRef>Prop_Data_Check</bpmn:sourceRef>
+        <bpmn:targetRef>Data_Check</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="GQuality" name="Готовность подтверждена?">
+      <bpmn:incoming>Flow_9</bpmn:incoming>
+      <bpmn:outgoing>Flow_10</bpmn:outgoing>
+      <bpmn:outgoing>Flow_21</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="Prepare" name="Подготовить оборудование к запуску">
+      <bpmn:incoming>Flow_11</bpmn:incoming>
+      <bpmn:outgoing>Flow_12</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="Launch" name="Запустить производство партии">
+      <bpmn:incoming>Flow_12</bpmn:incoming>
+      <bpmn:outgoing>Flow_13</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:userTask id="Status" name="Зафиксировать запуск и статус партии">
+      <bpmn:documentation>Операция для автоматизации в процедурной программе КТ2.</bpmn:documentation>
+      <bpmn:incoming>Flow_13</bpmn:incoming>
+      <bpmn:outgoing>Flow_14</bpmn:outgoing>
+      <bpmn:property id="Prop_Data_Batch" />
+      <bpmn:dataOutputAssociation id="Assoc_Data_Batch">
+        <bpmn:sourceRef>Prop_Data_Batch</bpmn:sourceRef>
+        <bpmn:targetRef>Data_Batch</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+    <bpmn:endEvent id="End" name="Партия запущена в производство">
+      <bpmn:incoming>Flow_14</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="Start" targetRef="Register" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Register" targetRef="Activity_1b9hl13" />
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Materials" targetRef="GMaterials" />
+    <bpmn:sequenceFlow id="Flow_4" name="Да" sourceRef="GMaterials" targetRef="Docs" storm:LabelWidth="30" storm:LabelHeight="14" />
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="Docs" targetRef="GDocs" />
+    <bpmn:sequenceFlow id="Flow_6" name="Да" sourceRef="GDocs" targetRef="Gateway_0pdrphc" />
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="Equipment" targetRef="GEquipment" />
+    <bpmn:sequenceFlow id="Flow_8" name="Да" sourceRef="GEquipment" targetRef="Quality" />
+    <bpmn:sequenceFlow id="Flow_9" sourceRef="Quality" targetRef="GQuality" />
+    <bpmn:sequenceFlow id="Flow_10" name="Да" sourceRef="GQuality" targetRef="Approve" />
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="Approve" targetRef="Prepare" />
+    <bpmn:sequenceFlow id="Flow_12" sourceRef="Prepare" targetRef="Launch" />
+    <bpmn:sequenceFlow id="Flow_13" sourceRef="Launch" targetRef="Status" />
+    <bpmn:sequenceFlow id="Flow_14" sourceRef="Status" targetRef="End" />
+    <bpmn:sequenceFlow id="Flow_15" name="Нет" sourceRef="GMaterials" targetRef="Delay_GMaterials" />
+    <bpmn:sequenceFlow id="Flow_16" sourceRef="Delay_GMaterials" targetRef="End_GMaterials" />
+    <bpmn:sequenceFlow id="Flow_19" name="Нет" sourceRef="GEquipment" targetRef="Delay_GEquipment" />
+    <bpmn:sequenceFlow id="Flow_20" sourceRef="Delay_GEquipment" targetRef="End_GEquipment" />
+    <bpmn:sequenceFlow id="Flow_21" name="Нет" sourceRef="GQuality" targetRef="Delay_GQuality" />
+    <bpmn:userTask id="Delay_GMaterials" name="Зафиксировать нехватку материалов и перенести запуск">
+      <bpmn:incoming>Flow_15</bpmn:incoming>
+      <bpmn:outgoing>Flow_16</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="End_GMaterials" name="Запуск перенесён" storm:LabelWidth="75" storm:LabelHeight="48">
+      <bpmn:incoming>Flow_16</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0vtzto3" />
+    </bpmn:endEvent>
+    <bpmn:dataObjectReference id="Data_Order" name="Производственное задание; размер партии" dataObjectRef="Data_Order_object" />
+    <bpmn:dataObject id="Data_Order_object" />
+    <bpmn:sequenceFlow id="Flow_0qu0dz6" sourceRef="Activity_1b9hl13" targetRef="Materials" />
+    <bpmn:userTask id="Register" name="Зарегистрировать производственное задание">
+      <bpmn:documentation>Операция для автоматизации в процедурной программе КТ2.</bpmn:documentation>
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+      <bpmn:property id="Prop_Data_Order" />
+      <bpmn:dataInputAssociation id="Assoc_Data_Order">
+        <bpmn:sourceRef>Data_Order</bpmn:sourceRef>
+        <bpmn:targetRef>Prop_Data_Order</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:startEvent id="Start" name="Получено производственное задание">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="GMaterials" name="Материалов достаточно?">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_4</bpmn:outgoing>
+      <bpmn:outgoing>Flow_15</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:dataObjectReference id="Data_Check" name="Результат проверки готовности" dataObjectRef="Data_Check_object" />
+    <bpmn:dataObject id="Data_Check_object" />
+    <bpmn:userTask id="Approve" name="Согласовать запуск и назначить ответственных">
+      <bpmn:incoming>Flow_10</bpmn:incoming>
+      <bpmn:outgoing>Flow_11</bpmn:outgoing>
+      <bpmn:property id="Prop_Data_Staff" />
+      <bpmn:property id="Property_1gwvmi2" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_1qaxruo">
+        <bpmn:sourceRef>Data_Staff</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1gwvmi2</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:endEvent id="End_GQuality" name="Запуск перенесён" storm:LabelWidth="75" storm:LabelHeight="48">
+      <bpmn:incoming>Flow_22</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1ksnoh6" />
+    </bpmn:endEvent>
+    <bpmn:dataObjectReference id="Data_Batch" name="Партия и сведения о запуске" dataObjectRef="Data_Batch_object" />
+    <bpmn:dataObject id="Data_Batch_object" />
+    <bpmn:dataObjectReference id="Data_Staff" name="Сотрудники и назначения на партию" dataObjectRef="Data_Staff_object" />
+    <bpmn:dataObject id="Data_Staff_object" />
+    <bpmn:userTask id="Materials" name="Проверить наличие материалов">
+      <bpmn:documentation>Операция для автоматизации в процедурной программе КТ2.</bpmn:documentation>
+      <bpmn:incoming>Flow_0qu0dz6</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+      <bpmn:property id="Prop_Data_Materials" />
+      <bpmn:property id="Property_1o0r88x" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="Assoc_Data_Materials">
+        <bpmn:sourceRef>Data_Materials</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1o0r88x</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_1b9hl13" name="Рассчитать потребность">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qu0dz6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:dataObjectReference id="Data_Materials" name="Спецификация изделия; материалы; остатки" dataObjectRef="Data_Materials_object" />
+    <bpmn:dataObject id="Data_Materials_object" />
+    <bpmn:userTask id="Docs" name="Проверить технологическую документацию и параметры партии">
+      <bpmn:incoming>Flow_4</bpmn:incoming>
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+      <bpmn:property id="Prop_Data_Docs" />
+      <bpmn:dataInputAssociation id="Assoc_Data_Docs">
+        <bpmn:sourceRef>Data_Docs</bpmn:sourceRef>
+        <bpmn:targetRef>Prop_Data_Docs</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:dataObjectReference id="Data_Docs" name="Технологическая карта" dataObjectRef="Data_Docs_object" />
+    <bpmn:dataObject id="Data_Docs_object" />
+    <bpmn:exclusiveGateway id="GDocs" name="Документация соответствует требованиям?">
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0jvh9on</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1pf9f4e" sourceRef="Gateway_0pdrphc" targetRef="Equipment" />
+    <bpmn:exclusiveGateway id="GEquipment" name="Оборудование подобрано?">
+      <bpmn:incoming>Flow_7</bpmn:incoming>
+      <bpmn:outgoing>Flow_8</bpmn:outgoing>
+      <bpmn:outgoing>Flow_19</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Delay_GEquipment" name="Зафиксировать недоступность оборудования и перенести запуск">
+      <bpmn:incoming>Flow_19</bpmn:incoming>
+      <bpmn:outgoing>Flow_20</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="End_GEquipment" name="Запуск перенесён" storm:LabelWidth="75" storm:LabelHeight="48">
+      <bpmn:incoming>Flow_20</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0xuzcly" />
+    </bpmn:endEvent>
+    <bpmn:userTask id="Equipment" name="Подобрать доступное оборудование для операций партии">
+      <bpmn:documentation>Операция для автоматизации в процедурной программе КТ2.</bpmn:documentation>
+      <bpmn:incoming>Flow_1pf9f4e</bpmn:incoming>
+      <bpmn:outgoing>Flow_7</bpmn:outgoing>
+      <bpmn:property id="Prop_Data_Equipment" />
+      <bpmn:dataInputAssociation id="Assoc_Data_Equipment">
+        <bpmn:sourceRef>Data_Equipment</bpmn:sourceRef>
+        <bpmn:targetRef>Prop_Data_Equipment</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:dataObjectReference id="Data_Equipment" name="Оборудование; доступность; возможности" dataObjectRef="Data_Equipment_object" />
+    <bpmn:dataObject id="Data_Equipment_object" />
+    <bpmn:exclusiveGateway id="Gateway_0pdrphc">
+      <bpmn:incoming>Flow_6</bpmn:incoming>
+      <bpmn:incoming>Flow_1vv6gnw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pf9f4e</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Delay_GQuality" name="Зафиксировать несоответствие требованиям качества и перенести запуск">
+      <bpmn:incoming>Flow_21</bpmn:incoming>
+      <bpmn:outgoing>Flow_22</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_22" sourceRef="Delay_GQuality" targetRef="End_GQuality" />
+    <bpmn:sequenceFlow id="Flow_1vv6gnw" sourceRef="Task_Adjust" targetRef="Gateway_0pdrphc" />
+    <bpmn:userTask id="Task_Adjust" name="Исправить технологическую документацию">
+      <bpmn:incoming>Flow_0jvh9on</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vv6gnw</bpmn:outgoing>
+      <bpmn:standardLoopCharacteristics />
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0jvh9on" name="Нет" sourceRef="GDocs" targetRef="Task_Adjust" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_1">
+    <bpmndi:BPMNPlane id="Plane_1" bpmnElement="Collaboration_1">
+      <bpmndi:BPMNShape id="Participant_1_di" bpmnElement="Participant_1" isHorizontal="true">
+        <dc:Bounds x="60" y="0" width="3430" height="1740" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_5_di" bpmnElement="Lane_5" isHorizontal="true">
+        <dc:Bounds x="90" y="1460" width="3400" height="280" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_4_di" bpmnElement="Lane_4" isHorizontal="true">
+        <dc:Bounds x="90" y="1180" width="3400" height="280" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_3_di" bpmnElement="Lane_3" isHorizontal="true">
+        <dc:Bounds x="90" y="900" width="3400" height="280" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_2_di" bpmnElement="Lane_2" isHorizontal="true">
+        <dc:Bounds x="90" y="620" width="3400" height="280" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1_di" bpmnElement="Lane_1" isHorizontal="true">
+        <dc:Bounds x="90" y="340" width="3400" height="280" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0_di" bpmnElement="Lane_0" isHorizontal="true">
+        <dc:Bounds x="90" y="0" width="3400" height="340" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Quality_di" bpmnElement="Quality">
+        <dc:Bounds x="1640" y="1230" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GQuality_di" bpmnElement="GQuality" isMarkerVisible="true">
+        <dc:Bounds x="1850" y="1245" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1836" y="1218" width="78" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Prepare_di" bpmnElement="Prepare">
+        <dc:Bounds x="2240" y="1510" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Launch_di" bpmnElement="Launch">
+        <dc:Bounds x="2460" y="1510" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Status_di" bpmnElement="Status">
+        <dc:Bounds x="2680" y="1510" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_di" bpmnElement="End">
+        <dc:Bounds x="2900" y="1532" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2875" y="1588" width="86" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Delay_GMaterials_di" bpmnElement="Delay_GMaterials">
+        <dc:Bounds x="940" y="480" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_03fjvgg_di" bpmnElement="End_GMaterials">
+        <dc:Bounds x="1232" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1215" y="538" width="75" height="48" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Data_Order_di" bpmnElement="Data_Order">
+        <dc:Bounds x="332" y="35" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="349" y="87" width="82" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Register_di" bpmnElement="Register">
+        <dc:Bounds x="250" y="140" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="172" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="147" y="198" width="87" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GMaterials_di" bpmnElement="GMaterials" isMarkerVisible="true">
+        <dc:Bounds x="785" y="495" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="779" y="555" width="62" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Data_Check_di" bpmnElement="Data_Check">
+        <dc:Bounds x="1705" y="1345" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1697" y="1397" width="56" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Approve_di" bpmnElement="Approve">
+        <dc:Bounds x="2020" y="1030" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Delay_GQuality_di" bpmnElement="Delay_GQuality">
+        <dc:Bounds x="1920" y="1350" width="160" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0jdbyhq_di" bpmnElement="End_GQuality">
+        <dc:Bounds x="2122" y="1372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2105" y="1408" width="75" height="48" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Data_Batch_di" bpmnElement="Data_Batch">
+        <dc:Bounds x="2742" y="1640" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2734" y="1692" width="56" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Data_Staff_di" bpmnElement="Data_Staff">
+        <dc:Bounds x="2092" y="955" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2074" y="909" width="72" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Materials_di" bpmnElement="Materials">
+        <dc:Bounds x="630" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0u50okt_di" bpmnElement="Activity_1b9hl13">
+        <dc:Bounds x="455" y="480" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Data_Materials_di" bpmnElement="Data_Materials">
+        <dc:Bounds x="682" y="405" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="663" y="347" width="73" height="48" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Docs_di" bpmnElement="Docs">
+        <dc:Bounds x="910" y="770" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Data_Docs_di" bpmnElement="Data_Docs">
+        <dc:Bounds x="952" y="655" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="967" y="708" width="85" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GDocs_di" bpmnElement="GDocs" isMarkerVisible="true">
+        <dc:Bounds x="1055" y="785" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1044" y="742" width="72" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GEquipment_di" bpmnElement="GEquipment" isMarkerVisible="true">
+        <dc:Bounds x="1565" y="965" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1554" y="931" width="72" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Delay_GEquipment_di" bpmnElement="Delay_GEquipment">
+        <dc:Bounds x="1700" y="950" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_048uhk4_di" bpmnElement="End_GEquipment">
+        <dc:Bounds x="1902" y="972" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1885" y="1008" width="75" height="48" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Equipment_di" bpmnElement="Equipment">
+        <dc:Bounds x="1405" y="950" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Data_Equipment_di" bpmnElement="Data_Equipment">
+        <dc:Bounds x="1442" y="1065" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1425" y="1117" width="75" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0pdrphc_di" bpmnElement="Gateway_0pdrphc" isMarkerVisible="true">
+        <dc:Bounds x="1315" y="965" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ubbl4o_di" bpmnElement="Task_Adjust">
+        <dc:Bounds x="1150" y="772.5" width="140" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="208" y="180" />
+        <di:waypoint x="250" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="390" y="180" />
+        <di:waypoint x="410" y="180" />
+        <di:waypoint x="410" y="520" />
+        <di:waypoint x="455" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="730" y="520" />
+        <di:waypoint x="785" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_di" bpmnElement="Flow_4">
+        <di:waypoint x="835" y="520" />
+        <di:waypoint x="870" y="520" />
+        <di:waypoint x="870" y="810" />
+        <di:waypoint x="910" y="810" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="835" y="533" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+        <di:waypoint x="1030" y="810" />
+        <di:waypoint x="1055" y="810" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
+        <di:waypoint x="1080" y="835" />
+        <di:waypoint x="1080" y="990" />
+        <di:waypoint x="1315" y="990" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1093" y="943" width="14" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_7_di" bpmnElement="Flow_7">
+        <di:waypoint x="1515" y="990" />
+        <di:waypoint x="1565" y="990" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_8_di" bpmnElement="Flow_8">
+        <di:waypoint x="1590" y="1015" />
+        <di:waypoint x="1590" y="1270" />
+        <di:waypoint x="1640" y="1270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1599" y="1071" width="14" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_9_di" bpmnElement="Flow_9">
+        <di:waypoint x="1800" y="1270" />
+        <di:waypoint x="1850" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10_di" bpmnElement="Flow_10">
+        <di:waypoint x="1900" y="1270" />
+        <di:waypoint x="1960" y="1270" />
+        <di:waypoint x="1960" y="1070" />
+        <di:waypoint x="2020" y="1070" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1923" y="1248" width="14" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11_di" bpmnElement="Flow_11">
+        <di:waypoint x="2180" y="1070" />
+        <di:waypoint x="2210" y="1070" />
+        <di:waypoint x="2210" y="1550" />
+        <di:waypoint x="2240" y="1550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12_di" bpmnElement="Flow_12">
+        <di:waypoint x="2400" y="1550" />
+        <di:waypoint x="2460" y="1550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13_di" bpmnElement="Flow_13">
+        <di:waypoint x="2620" y="1550" />
+        <di:waypoint x="2680" y="1550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14_di" bpmnElement="Flow_14">
+        <di:waypoint x="2840" y="1550" />
+        <di:waypoint x="2900" y="1550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15_di" bpmnElement="Flow_15">
+        <di:waypoint x="835" y="520" />
+        <di:waypoint x="940" y="520" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="890" y="504" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16_di" bpmnElement="Flow_16">
+        <di:waypoint x="1100" y="520" />
+        <di:waypoint x="1232" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19_di" bpmnElement="Flow_19">
+        <di:waypoint x="1615" y="990" />
+        <di:waypoint x="1700" y="990" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1640" y="973" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_20_di" bpmnElement="Flow_20">
+        <di:waypoint x="1860" y="990" />
+        <di:waypoint x="1902" y="990" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_21_di" bpmnElement="Flow_21">
+        <di:waypoint x="1875" y="1295" />
+        <di:waypoint x="1875" y="1390" />
+        <di:waypoint x="1920" y="1390" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1881" y="1368" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_22_di" bpmnElement="Flow_22">
+        <di:waypoint x="2080" y="1390" />
+        <di:waypoint x="2122" y="1390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qu0dz6_di" bpmnElement="Flow_0qu0dz6">
+        <di:waypoint x="585" y="520" />
+        <di:waypoint x="630" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pf9f4e_di" bpmnElement="Flow_1pf9f4e">
+        <di:waypoint x="1365" y="990" />
+        <di:waypoint x="1405" y="990" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vv6gnw_di" bpmnElement="Flow_1vv6gnw">
+        <di:waypoint x="1290" y="810" />
+        <di:waypoint x="1340" y="810" />
+        <di:waypoint x="1340" y="965" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jvh9on_di" bpmnElement="Flow_0jvh9on">
+        <di:waypoint x="1105" y="810" />
+        <di:waypoint x="1150" y="810" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1118" y="792" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1038w93_di" bpmnElement="Association_1038w93">
+        <di:waypoint x="1230" y="773" />
+        <di:waypoint x="1242" y="731" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1tyou0q_di" bpmnElement="TextAnnotation_1tyou0q">
+        <dc:Bounds x="1200" y="640" width="180" height="91" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Assoc_Data_Check_di" bpmnElement="Assoc_Data_Check">
+        <di:waypoint x="1722" y="1310" />
+        <di:waypoint x="1722" y="1345" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Assoc_Data_Batch_di" bpmnElement="Assoc_Data_Batch">
+        <di:waypoint x="2761" y="1590" />
+        <di:waypoint x="2760" y="1640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Assoc_Data_Order_di" bpmnElement="Assoc_Data_Order">
+        <di:waypoint x="345" y="85" />
+        <di:waypoint x="338" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_1qaxruo_di" bpmnElement="DataInputAssociation_1qaxruo">
+        <di:waypoint x="2106" y="1005" />
+        <di:waypoint x="2102" y="1030" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Assoc_Data_Materials_di" bpmnElement="Assoc_Data_Materials">
+        <di:waypoint x="685" y="455" />
+        <di:waypoint x="672" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Assoc_Data_Docs_di" bpmnElement="Assoc_Data_Docs">
+        <di:waypoint x="965" y="705" />
+        <di:waypoint x="958" y="770" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Assoc_Data_Equipment_di" bpmnElement="Assoc_Data_Equipment">
+        <di:waypoint x="1454" y="1065" />
+        <di:waypoint x="1446" y="1030" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
