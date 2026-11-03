@@ -97,29 +97,55 @@ def occupied_equipment_ids(data, current_batch_id):
 
 
 def select_equipment(required_types, data, batch_id):
-    """Выбирает по одной свободной исправной единице на каждый требуемый тип."""
     find_record(data['batches'], 'id_партии', batch_id)
+
     if not required_types:
         raise ValueError('Не заданы требуемые типы оборудования')
+
     occupied = occupied_equipment_ids(data, batch_id)
     selected = []
     missing = []
+
     for required_type in required_types:
         chosen = None
+
         for equipment in data['equipment']:
+            if equipment['тип'] != required_type:
+                continue
+            if equipment['состояние'] != 'Исправно':
+                continue
+
             equipment_id = equipment['id_оборудования']
-            if (equipment['тип'] == required_type
-                    and equipment['состояние'] == 'Исправно'
-                    and equipment_id not in occupied
-                    and equipment_id not in selected):
-                chosen = equipment_id
-                break
+
+            is_occupied = False
+            for occupied_id in occupied:
+                if occupied_id == equipment_id:
+                    is_occupied = True
+                    break
+            if is_occupied:
+                continue
+
+            already_selected = False
+            for selected_id in selected:
+                if selected_id == equipment_id:
+                    already_selected = True
+                    break
+            if already_selected:
+                continue
+
+            chosen = equipment_id
+            break
+
         if chosen is None:
             missing.append(required_type)
         else:
             selected.append(chosen)
-    return {'готовность': not missing, 'id_оборудования': selected,
-            'недостающие_типы': missing}
+
+    return {
+        'готовность': not missing,
+        'id_оборудования': selected,
+        'недостающие_типы': missing,
+    }
 
 
 def assign_equipment(data, batch_id, equipment_ids):
@@ -278,3 +304,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
