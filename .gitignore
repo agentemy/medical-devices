@@ -31,3 +31,8 @@ temp/
 *.swp
 *.swo
 
+*.class
+target/
+build/
+out/
+src/java/lib/
