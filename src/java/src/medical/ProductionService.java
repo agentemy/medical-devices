@@ -121,7 +121,14 @@ public final class ProductionService {
         if (!Arrays.asList("Подготовка", "Готова к запуску").contains(batch.getStatus())) throw new IllegalArgumentException("Текущий статус партии не допускает запуск");
         launchRules.get(0).validate(this, batch);
         ControlProtocol latest = null;
-        for (ControlProtocol p : data.protocols()) if (p.getBatchId() == batchId && (latest == null || p.getCheckedAt().compareTo(latest.getCheckedAt()) > 0 || (p.getCheckedAt().equals(latest.getCheckedAt()) && p.getId() > latest.getId()))) latest=p;
+        for (ControlProtocol p : data.protocols()) {
+            if (p.getBatchId() != batchId) continue;
+            LocalDateTime checkedAt = LocalDateTime.parse(p.getCheckedAt());
+            if (latest == null || checkedAt.isAfter(LocalDateTime.parse(latest.getCheckedAt()))
+                    || (checkedAt.isEqual(LocalDateTime.parse(latest.getCheckedAt())) && p.getId() > latest.getId())) {
+                latest = p;
+            }
+        }
         if (latest == null || !"Соответствует".equals(latest.getResult())) throw new IllegalArgumentException("Нет положительного результата последней проверки");
         if (LocalDateTime.parse(latest.getCheckedAt()).isAfter(launch)) throw new IllegalArgumentException("Дата запуска предшествует проверке");
         launchRules.get(1).validate(this, batch);

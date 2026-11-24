@@ -226,7 +226,7 @@ def record_batch_launch(data, batch_id, launched_at):
     latest = None
     for protocol in data['control_protocols']:
         if protocol['id_партии'] == batch_id:
-            if latest is None or (protocol['дата_проверки'], protocol['id_протокола']) > (latest['дата_проверки'], latest['id_протокола']):
+            if latest is None or (datetime.fromisoformat(protocol['дата_проверки']), protocol['id_протокола']) > (datetime.fromisoformat(latest['дата_проверки']), latest['id_протокола']):
                 latest = protocol
     if latest is None or latest['результат'] != 'Соответствует':
         raise ValueError('Нет положительного результата последней проверки')

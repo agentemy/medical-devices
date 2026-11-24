@@ -30,7 +30,7 @@ public final class ProductionServiceTest {
         check(service.assignmentsFor(batch.getId()).isEmpty(), "Некорректное назначение изменило данные");
         service.assignEquipment(batch.getId(), Arrays.asList(1, 2));
         service.addControlProtocol(batch.getId(), 3, "2026-11-03T09:30:00", "Соответствует", "");
-        service.addControlProtocol(batch.getId(), 3, "2026-11-03T09:30:00", "Не соответствует", "");
+        service.addControlProtocol(batch.getId(), 3, "2026-11-03T09:30", "Не соответствует", "");
         fails(() -> service.recordBatchLaunch(batch.getId(), "2026-11-03T10:00:00"));
         check(batch.getStatus().equals("Подготовка"), "Запуск после отрицательного протокола");
         service.recordDelay(batch.getId(), 3, "2026-11-03T10:00:00", "Причина", "2026-11-04");
