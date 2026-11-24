@@ -1,5 +1,12 @@
-package medical;
+package medical.rules;
+
+import medical.model.Batch;
+import medical.model.BatchEquipment;
+import medical.model.Equipment;
+import medical.service.ProductionService;
+
 import java.util.List;
+
 public final class EquipmentRule extends LaunchRule {
     @Override public void validate(ProductionService service, Batch batch) {
         List<BatchEquipment> assignments = service.assignmentsFor(batch.getId());

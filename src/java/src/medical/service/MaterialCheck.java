@@ -1,7 +1,8 @@
-package medical;
+package medical.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 public final class MaterialCheck {
     public static final class Item {
         private final int materialId;

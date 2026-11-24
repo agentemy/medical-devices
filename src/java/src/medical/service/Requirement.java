@@ -1,4 +1,4 @@
-package medical;
+package medical.service;
 public final class Requirement {
     private final int materialId;
     private final double amount;

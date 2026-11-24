@@ -1,4 +1,9 @@
-package medical;
+package medical.service;
+
+import medical.model.*;
+import medical.rules.EquipmentRule;
+import medical.rules.MaterialsRule;
+import medical.rules.ReadinessRule;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

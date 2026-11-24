@@ -1,7 +1,8 @@
-package medical;
+package medical.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 public final class EquipmentSelection {
     private final List<Integer> selected = new ArrayList<Integer>();
     private final List<String> missing = new ArrayList<String>();

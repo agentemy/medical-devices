@@ -1,4 +1,5 @@
-package medical;
+package medical.model;
+
 
 import com.google.gson.annotations.SerializedName;
 
@@ -18,5 +19,5 @@ public class Material {
     public String getName() { return name; }
     public String getUnit() { return unit; }
     public double getAvailable() { return available; }
-    void setAvailable(double value) { this.available = value; }
+    public void setAvailable(double value) { this.available = value; }
 }

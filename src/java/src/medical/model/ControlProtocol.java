@@ -1,4 +1,5 @@
-package medical;
+package medical.model;
+
 
 import com.google.gson.annotations.SerializedName;
 
@@ -11,7 +12,7 @@ public class ControlProtocol {
     @SerializedName("результат") private String result;
     @SerializedName("замечания") private String remarks;
     ControlProtocol() {}
-    ControlProtocol(int id, String number, int batchId, int employeeId, String checkedAt, String result, String remarks) {
+    public ControlProtocol(int id, String number, int batchId, int employeeId, String checkedAt, String result, String remarks) {
         this.id = id;
         this.number = number;
         this.batchId = batchId;

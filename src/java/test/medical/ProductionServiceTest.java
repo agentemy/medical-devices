@@ -1,5 +1,7 @@
 package medical;
 import com.google.gson.Gson;
+import medical.model.Batch;
+
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

@@ -1,4 +1,6 @@
 package medical;
+import medical.model.*;
+import medical.service.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

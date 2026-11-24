@@ -1,4 +1,5 @@
-package medical;
+package medical.model;
+
 
 import com.google.gson.annotations.SerializedName;
 

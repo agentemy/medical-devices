@@ -1,4 +1,5 @@
-package medical;
+package medical.model;
+
 
 import com.google.gson.annotations.SerializedName;
 
@@ -11,7 +12,7 @@ public class Delay {
     @SerializedName("прежняя_дата_запуска") private String previousDate;
     @SerializedName("новая_дата_запуска") private String newDate;
     Delay() {}
-    Delay(int id, int batchId, int employeeId, String recordedAt, String reason, String previousDate, String newDate) {
+    public Delay(int id, int batchId, int employeeId, String recordedAt, String reason, String previousDate, String newDate) {
         this.id = id;
         this.batchId = batchId;
         this.employeeId = employeeId;

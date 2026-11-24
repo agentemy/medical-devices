@@ -1,4 +1,5 @@
-package medical;
+package medical.model;
+
 
 import com.google.gson.annotations.SerializedName;
 
@@ -12,7 +13,7 @@ public class Batch {
     @SerializedName("статус") private String status;
     @SerializedName("id_сотрудника") private int employeeId;
     Batch() {}
-    Batch(int id, int productId, int quantity, String plannedDate, String launchDate, String number, String status, int employeeId) {
+    public Batch(int id, int productId, int quantity, String plannedDate, String launchDate, String number, String status, int employeeId) {
         this.id = id;
         this.productId = productId;
         this.quantity = quantity;
@@ -26,11 +27,11 @@ public class Batch {
     public int getProductId() { return productId; }
     public int getQuantity() { return quantity; }
     public String getPlannedDate() { return plannedDate; }
-    void setPlannedDate(String value) { this.plannedDate = value; }
+    public void setPlannedDate(String value) { this.plannedDate = value; }
     public String getLaunchDate() { return launchDate; }
-    void setLaunchDate(String value) { this.launchDate = value; }
+    public void setLaunchDate(String value) { this.launchDate = value; }
     public String getNumber() { return number; }
     public String getStatus() { return status; }
-    void setStatus(String value) { this.status = value; }
+    public void setStatus(String value) { this.status = value; }
     public int getEmployeeId() { return employeeId; }
 }
