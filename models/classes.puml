@@ -1,0 +1,293 @@
+@startuml
+title Диаграмма классов — подготовка и запуск производственной партии
+left to right direction
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName DejaVu Sans
+skinparam classFontSize 13
+skinparam classAttributeFontSize 11
+skinparam dpi 130
+hide circle
+package "medical" as pkg_medical {
+class Main {
+  --
+  {static} - number(value: double): String
+  {static} - runDemo(data: ProductionData, scenario: String): void
+  {static} + main(args: String[]): void
+}
+}
+package "medical.model" as pkg_medical_model {
+class Batch {
+  - id: int
+  - productId: int
+  - quantity: int
+  - plannedDate: String
+  - launchDate: String
+  - number: String
+  - status: String
+  - employeeId: int
+  --
+  ~ Batch()
+  + Batch(id: int, productId: int, quantity: int, plannedDate: String, launchDate: String, number: String, status: String, employeeId: int)
+  + getId(): int
+  + getProductId(): int
+  + getQuantity(): int
+  + getPlannedDate(): String
+  + setPlannedDate(value: String): void
+  + getLaunchDate(): String
+  + setLaunchDate(value: String): void
+  + getNumber(): String
+  + getStatus(): String
+  + setStatus(value: String): void
+  + getEmployeeId(): int
+}
+class BatchEquipment {
+  - batchId: int
+  - equipmentId: int
+  --
+  ~ BatchEquipment()
+  + BatchEquipment(batchId: int, equipmentId: int)
+  + getBatchId(): int
+  + getEquipmentId(): int
+}
+class ControlProtocol {
+  - id: int
+  - number: String
+  - batchId: int
+  - employeeId: int
+  - checkedAt: String
+  - result: String
+  - remarks: String
+  --
+  ~ ControlProtocol()
+  + ControlProtocol(id: int, number: String, batchId: int, employeeId: int, checkedAt: String, result: String, remarks: String)
+  + getId(): int
+  + getNumber(): String
+  + getBatchId(): int
+  + getEmployeeId(): int
+  + getCheckedAt(): String
+  + getResult(): String
+  + getRemarks(): String
+}
+class Delay {
+  - id: int
+  - batchId: int
+  - employeeId: int
+  - recordedAt: String
+  - reason: String
+  - previousDate: String
+  - newDate: String
+  --
+  ~ Delay()
+  + Delay(id: int, batchId: int, employeeId: int, recordedAt: String, reason: String, previousDate: String, newDate: String)
+  + getId(): int
+  + getBatchId(): int
+  + getEmployeeId(): int
+  + getRecordedAt(): String
+  + getReason(): String
+  + getPreviousDate(): String
+  + getNewDate(): String
+}
+class Employee {
+  - id: int
+  - fullName: String
+  - position: String
+  - department: String
+  --
+  ~ Employee()
+  ~ Employee(id: int, fullName: String, position: String, department: String)
+  + getId(): int
+  + getFullName(): String
+  + getPosition(): String
+  + getDepartment(): String
+}
+class Equipment {
+  - id: int
+  - inventoryNumber: String
+  - name: String
+  - type: String
+  - condition: String
+  --
+  ~ Equipment()
+  ~ Equipment(id: int, inventoryNumber: String, name: String, type: String, condition: String)
+  + getId(): int
+  + getInventoryNumber(): String
+  + getName(): String
+  + getType(): String
+  + getCondition(): String
+}
+class Material {
+  - id: int
+  - name: String
+  - unit: String
+  - available: double
+  --
+  ~ Material()
+  ~ Material(id: int, name: String, unit: String, available: double)
+  + getId(): int
+  + getName(): String
+  + getUnit(): String
+  + getAvailable(): double
+  + setAvailable(value: double): void
+}
+class Product {
+  - id: int
+  - name: String
+  - volume: int
+  --
+  ~ Product()
+  ~ Product(id: int, name: String, volume: int)
+  + getId(): int
+  + getName(): String
+  + getVolume(): int
+}
+class Specification {
+  - productId: int
+  - materialId: int
+  - rate: double
+  --
+  ~ Specification()
+  ~ Specification(productId: int, materialId: int, rate: double)
+  + getProductId(): int
+  + getMaterialId(): int
+  + getRate(): double
+}
+}
+package "medical.service" as pkg_medical_service {
+class EquipmentSelection {
+  - selected: List<Integer>
+  - missing: List<String>
+  --
+  ~ select(id: int): void
+  ~ miss(type: String): void
+  + isReady(): boolean
+  + getSelected(): List<Integer>
+  + getMissing(): List<String>
+}
+class MaterialCheck {
+  - items: List<Item>
+  - ready: boolean
+  --
+  ~ add(item: Item): void
+  + isReady(): boolean
+  + getItems(): List<Item>
+}
+class "MaterialCheck.Item" as MaterialCheckItem {
+  - materialId: int
+  - name: String
+  - unit: String
+  - reason: String
+  - required: double
+  - available: double
+  - deficit: double
+  --
+  ~ Item(id: int, name: String, unit: String, required: double, available: double, deficit: double, reason: String)
+  + getMaterialId(): int
+  + getName(): String
+  + getUnit(): String
+  + getReason(): String
+  + getRequired(): double
+  + getAvailable(): double
+  + getDeficit(): double
+}
+class ProductionData {
+  - products: List<Product>
+  - materials: List<Material>
+  - specifications: List<Specification>
+  - equipment: List<Equipment>
+  - employees: List<Employee>
+  - batches: List<Batch>
+  - batch_equipment: List<BatchEquipment>
+  - delays: List<Delay>
+  - control_protocols: List<ControlProtocol>
+  --
+  + products(): List<Product>
+  + materials(): List<Material>
+  + specifications(): List<Specification>
+  + equipment(): List<Equipment>
+  + employees(): List<Employee>
+  + batches(): List<Batch>
+  + assignments(): List<BatchEquipment>
+  + delays(): List<Delay>
+  + protocols(): List<ControlProtocol>
+}
+class ProductionService {
+  - data: ProductionData
+  - launchRules: List<ReadinessRule>
+  --
+  + ProductionService(data: ProductionData)
+  + findBatch(id: int): Batch
+  + findEquipment(id: int): Equipment
+  - requireEmployee(id: int): void
+  + registerBatch(productId: int, quantity: int, plannedDate: String, employeeId: int): Batch
+  + calculateRequirements(batch: Batch): List<Requirement>
+  + checkMaterials(requirements: List<Requirement>): MaterialCheck
+  + occupiedEquipmentIds(currentBatchId: int): List<Integer>
+  + selectEquipment(types: List<String>, batchId: int): EquipmentSelection
+  + assignmentsFor(batchId: int): List<BatchEquipment>
+  + assignEquipment(batchId: int, ids: List<Integer>): void
+  + addControlProtocol(batchId: int, employeeId: int, checkedAt: String, result: String, remarks: String): void
+  + recordDelay(batchId: int, employeeId: int, recordedAt: String, reason: String, newDate: String): void
+  + recordBatchLaunch(batchId: int, launchedAt: String): void
+}
+class Requirement {
+  - materialId: int
+  - amount: double
+  --
+  + Requirement(materialId: int, amount: double)
+  + getMaterialId(): int
+  + getAmount(): double
+}
+}
+package "medical.rules" as pkg_medical_rules {
+class EquipmentRule {
+  --
+  + validate(service: ProductionService, batch: Batch): void
+}
+abstract class LaunchRule {
+  --
+  # require(condition: boolean, message: String): void
+}
+class MaterialsRule {
+  --
+  + validate(service: ProductionService, batch: Batch): void
+}
+interface ReadinessRule <<interface>> {
+  --
+  + validate(service: ProductionService, batch: Batch): void
+}
+}
+pkg_medical ..> pkg_medical_model
+pkg_medical ..> pkg_medical_service
+pkg_medical_service ..> pkg_medical_model
+pkg_medical_service ..> pkg_medical_rules
+pkg_medical_rules ..> pkg_medical_model
+pkg_medical_rules ..> pkg_medical_service
+ReadinessRule <|.. LaunchRule
+LaunchRule <|-- MaterialsRule
+LaunchRule <|-- EquipmentRule
+ProductionService "1" --> "1" ProductionData : data
+ProductionService "1" --> "2" ReadinessRule : launchRules
+ProductionData "1" o-- "0..*" Product : products
+ProductionData "1" o-- "0..*" Material : materials
+ProductionData "1" o-- "0..*" Specification : specifications
+ProductionData "1" o-- "0..*" Equipment : equipment
+ProductionData "1" o-- "0..*" Employee : employees
+ProductionData "1" o-- "0..*" Batch : batches
+ProductionData "1" o-- "0..*" BatchEquipment : batch_equipment
+ProductionData "1" o-- "0..*" Delay : delays
+ProductionData "1" o-- "0..*" ControlProtocol : control_protocols
+MaterialCheck "1" o-- "0..*" MaterialCheckItem : items
+Main ..> ProductionService : использует
+ProductionService ..> Requirement : возвращает
+ProductionService ..> MaterialCheck : возвращает
+ProductionService ..> EquipmentSelection : возвращает
+note bottom of Batch
+  Между сущностями в текущем коде хранятся
+  числовые идентификаторы, а не ссылки на объекты.
+end note
+legend bottom
+  + public   - private   # protected   ~ доступ в пределах пакета
+  Зависимости пакетов: medical → model, service; service → model, rules; rules → model, service.
+endlegend
+@enduml
